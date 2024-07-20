@@ -5,13 +5,18 @@ import sys
 import numpy as np
   
 # reading the video 
-os.system('rm test.mp4')
-os.system('yt-dlp -o "test.mp4" -f "[ext=mp4]" --merge-output-format mp4 %s' % sys.argv[1])
+# os.system('rm test.mp4')
+# os.system('yt-dlp -o "test.mp4" -f "[ext=mp4]" --merge-output-format mp4 %s' % sys.argv[1])
 
 source = cv2.VideoCapture('test.mp4') 
-  
+length = int(source.get(cv2.CAP_PROP_FRAME_COUNT))
+print( length )
+
+count = 0
+
 # running the loop 
 while True: 
+    count += 1
   
     # extracting the frames 
     ret, img = source.read() 
@@ -55,17 +60,18 @@ while True:
     # [0,1] = (12, 318, -627)
     # execute as @a at @s run fill x y z x y z minecraft:target/minecraft:light_gray_wool
 
-    f = open("videoPlayer/data/player/functions/set_first_frame.mcfunction", "w")
+    f = open(f'videoPlayer/data/player/functions/player/frame{count}.mcfunction', "w")
 
     for i in range(190):
         for j in range(320):
             if small[i, j] == 255:
                 f.write("execute as @a at @s run fill %d %d %d %d %d %d minecraft:target\n" % (12, 318-(2*i), -629+(2*j), 12, 318-(2*i), -629+(2*j)))
+            else:
+                f.write("execute as @a at @s run fill %d %d %d %d %d %d minecraft:light_gray_wool\n" % (12, 318-(2*i), -629+(2*j), 12, 318-(2*i), -629+(2*j)))
       
     # displaying the video 
     cv2.imshow("Live", small)
     f.close()
-    break
   
     # exiting the loop 
     key = cv2.waitKey(1) 
